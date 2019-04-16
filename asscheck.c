@@ -21,7 +21,7 @@ typedef struct CODE{
     int size;//代码长度
     char *buff;//代码地址地址
     int size_segment;//多少个代码段
-    segments *seg;
+    SEGMENTS *seg;
 }CODE;
 
 // 静态信息段落结束
@@ -57,19 +57,17 @@ typedef struct chunk //用户
 struct cpu_i cpu;
 
 
-WIN32_FIND_DATA FileIntomation(char *path){
+BOOL FileIntomation(char *path,WIN32_FIND_DATA  * FindFileData ){
     printf("Precompiled:%s\n",path);
-    WIN32_FIND_DATA  FindFileData;
+    
     HANDLE hFind;
-    hFind = FindFirstFile(path, &FindFileData);
+    hFind = FindFirstFile(path, FindFileData);
     if (hFind == INVALID_HANDLE_VALUE){
-        printf ("Invalid File Handle. Get Last Error reports %d ", GetLastError ());
-        FindClose(hFind);
-        return WIN32_FIND_DATA;
+        
+        return FALSE;
     }else{
-        printf ("The first file found is %s ", FindFileData.cFileName);
-        FindClose(hFind);
-        return NULL;
+        
+        return TRUE;
     }
 }
 
@@ -78,16 +76,14 @@ void Interpreter_Runner(){
 }
 
 void Interpreter_Entry(char *path){// 包含初始化代码信息，区分代码段等等
-    WIN32_FIND_DATA f = FileIntomation(argv[1]);
+    
+    WIN32_FIND_DATA f;
     FILE *fp;
-    struct CODE code = {
-        .size = f.nFileSizeLow;
-        .buff = malloc()
-    };
-    if (f == NULL){
-        printf("cannot find path:%s\n",path);
-        return;
-    }
+    int fsize;
+    if (FileIntomation(path,&f)){
+        fsize = f.nFileSizeLow;
+    }else return;
+    
     
     fp = fopen(path, "r");
     if(fp==NULL)  {
