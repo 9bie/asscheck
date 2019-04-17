@@ -1,12 +1,13 @@
 // 检测器核心文件
 #include <stdio.h>
 #include<windows.h>
+#include<string.h>
 #define MAX_SIZE 255
 #define ISFUNCTION 0
 #define ISVARIABLE 1
 #define CODESEGMENT 0
 #define DATASEGMENT 1
-const char  * keywords[] = {"mov","call","inc","and other..."};//汇编关键字
+const char  * keywords[] = {"mov","call","inc","push","pop"};//汇编关键字
 
 
 // 静态信息段落，保留解析前的基本信息
@@ -30,11 +31,7 @@ typedef struct CODE{
 // 动态解析时候保存的信息
 
 
-typedef struct cpu_i
-{ //当前解析函数
-    char cs; //当前解析函数
-    int ip; //当前解析的第几行
-}cpu_i;
+
 
 
 typedef struct variables // 用户解析时候申明的变量内容
@@ -53,43 +50,45 @@ typedef struct chunk //用户
 
 
 
+//全局变量定义去
+SEGMENTS *cs;
+int ip;//按行数来当IP的hhhhh
+chunk strack;
 
-struct cpu_i cpu;
 
 
-BOOL FileIntomation(char *path,WIN32_FIND_DATA  * FindFileData ){
-    printf("Precompiled:%s\n",path);
-    
-    HANDLE hFind;
-    hFind = FindFirstFile(path, FindFileData);
-    if (hFind == INVALID_HANDLE_VALUE){
-        
-        return FALSE;
-    }else{
-        
-        return TRUE;
-    }
-}
+
+
+
 
 void Interpreter_Runner(){
 
 }
 
 void Interpreter_Entry(char *path){// 包含初始化代码信息，区分代码段等等
-    
-    WIN32_FIND_DATA f;
-    FILE *fp;
-    int fsize;
-    if (FileIntomation(path,&f)){
-        fsize = f.nFileSizeLow;
-    }else return;
-    
-    
-    fp = fopen(path, "r");
-    if(fp==NULL)  {
-        printf("read error\n");
-        return;
+    int file_size;
+    DWORD dwRead;
+    HANDLE hFile;
+    char *code;
+    hFile = CreateFile(path,GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
+    if (hFile == NULL) return;
+    file_size=GetFileSize(hFile,NULL);
+    code = (char*)malloc(file_size+1);
+    code[file_size+1]="\0";
+    if(!ReadFile(hFile,code,file_size,&dwRead,NULL))return;
+    // 首次处理代码，犹豫要不要用strtok
+    char *line;
+    line = strtok (code,"\n");
+    while(line){
+        
+        line = strtok (NULL,"\n");
     }
+
+
+
+
+
+    free(code);
 
 }
 int  main(int argc, char *argv[])
@@ -99,7 +98,7 @@ int  main(int argc, char *argv[])
         printf("usage: asscheck.exe [path]\n    Precompiled the code.\n");
     }else {
         
-        
+        Interpreter_Entry(argv[1]);
     }
     return 0;
 }
