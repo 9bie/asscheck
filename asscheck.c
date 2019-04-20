@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include<windows.h>
 #include<string.h>
+#include "dyList.c"
 #define MAX_SIZE 255
 #define ISFUNCTION 0
 #define ISVARIABLE 1
@@ -10,20 +11,18 @@
 const char  * keywords[] = {"mov","call","inc","push","pop"};//汇编关键字
 
 
+
+
+
 // 静态信息段落，保留解析前的基本信息
 typedef struct SEGMENTS{
-    int type;
+    
     char name;
     int size;
-    char *code;
+    char *code[];
 }SEGMENTS;
 
-typedef struct CODE{
-    int size;//代码长度
-    char *buff;//代码地址地址
-    int size_segment;//多少个代码段
-    SEGMENTS *seg;
-}CODE;
+
 
 // 静态信息段落结束
 
@@ -50,10 +49,6 @@ typedef struct chunk //用户
 
 
 
-//全局变量定义去
-SEGMENTS *cs;
-int ip;//按行数来当IP的hhhhh
-chunk strack;
 
 
 
@@ -76,11 +71,12 @@ void Interpreter_Entry(char *path){// 包含初始化代码信息，区分代码
     code = (char*)malloc(file_size+1);
     code[file_size+1]="\0";
     if(!ReadFile(hFile,code,file_size,&dwRead,NULL))return;
-    // 首次处理代码，犹豫要不要用strtok
+    // 首次处理代码
     char *line;
     line = strtok (code,"\n");
     while(line){
         
+
         line = strtok (NULL,"\n");
     }
 
@@ -93,6 +89,7 @@ void Interpreter_Entry(char *path){// 包含初始化代码信息，区分代码
 }
 int  main(int argc, char *argv[])
 {
+    
     //CLI部分
     if (argc == 1){
         printf("usage: asscheck.exe [path]\n    Precompiled the code.\n");
