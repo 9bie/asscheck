@@ -11,6 +11,7 @@ typedef struct dyList{
 
 const dyList * dyListInit(int size,void *data){
     const dyList new = {
+        
         .last_p=NULL,
         .next_p=NULL,
         .size = size,
@@ -21,7 +22,7 @@ const dyList * dyListInit(int size,void *data){
 }
 
 const dyList * dyListAppend(dyList *dyList_P,int size,void *data){
-    if(dyList_P->next_p != NULL)return dyList_P;// 并不是最后一个节点
+    if(dyList_P->next_p != NULL )return dyList_P;// 并不是最后一个节点
     const dyList new = {
         .last_p=dyList_P,
         .next_p=NULL,
@@ -43,5 +44,18 @@ const dyList * dyListPop(dyList *dyList_P){
         free(dyList_P);
         return last;
     };    
+}
+const dyList * dyListDelete(dyList *dyList_P,int i){
+    // if (i == 0){
+    //     return dyListPop(dyList_P);
+    // };
+    // if (dyList_P->last_p == NULL){
+    //     free(dyList_P);
+    //     return NULL;
+    // }else{
+    //     const dyList* last = dyList_P->last_p;
+    //     free(dyList_P);
+    //     return last;
+    // };    
 }
 
