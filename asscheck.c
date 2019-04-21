@@ -15,12 +15,6 @@ const char  * keywords[] = {"mov","call","inc","push","pop"};//汇编关键字
 
 
 // 静态信息段落，保留解析前的基本信息
-typedef struct SEGMENTS{
-    
-    char name;
-    int size;
-    char *code[];
-}SEGMENTS;
 
 
 
@@ -37,23 +31,49 @@ typedef struct variables // 用户解析时候申明的变量内容
 {
     char name;
     char type;
-    char count_ref; //引用计数器
-    BOOL alive;//是否还在存货周期内 
+    // char count_ref; //引用计数器
+    BOOL alive;//是否在存货周期内 ，这个需要动态修改
 } variables;
 typedef struct chunk //用户
 {
     int pStack ;//栈平衡指针，用于计算push和pop是否统一
-    int variables;
-    struct varibales *i;
+    // int variables;
+    // dyList * variable;//这货是存variables的指针链表
+    char * name;//该段落的名称
+    dyList * linecode;// 用户存这个段落每行的代码
 }chunk;
 
 
 
+typedef struct cpu{
+    int * cs;
+    int ip;//用行数来保存
+    // int variables;
+    dyList * variable;//这货是存variables的指针链表
+    
+    dyList * code_segment;//这货是用来存数据的，用于存chunk
+
+    dyList * stack;// 栈
+}cpu;
 
 
+//删首尾空
+void trim(char *strIn, char *strOut){
 
+    int i, j ;
 
+    i = 0;
 
+    j = strlen(strIn) - 1;
+
+    while(strIn[i] == ' ')
+        ++i;
+
+    while(strIn[j] == ' ')
+        --j;
+    strncpy(strOut, strIn + i , j - i + 1);
+    strOut[j - i + 1] = '\0';
+}
 
 
 void Interpreter_Runner(){
@@ -89,7 +109,7 @@ void Interpreter_Entry(char *path){// 包含初始化代码信息，区分代码
 }
 int  main(int argc, char *argv[])
 {
-    
+    printf("%s\n",strOut);
     //CLI部分
     if (argc == 1){
         printf("usage: asscheck.exe [path]\n    Precompiled the code.\n");
