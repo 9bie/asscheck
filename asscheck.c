@@ -2,7 +2,8 @@
 #include <stdio.h>
 #include<windows.h>
 #include<string.h>
-#include "dyList.c"
+#include "dyList.h"
+#include"utlis.c"
 #define MAX_SIZE 255
 #define ISFUNCTION 0
 #define ISVARIABLE 1
@@ -58,22 +59,7 @@ typedef struct cpu{
 
 
 //删首尾空
-void trim(char *strIn, char *strOut){
 
-    int i, j ;
-
-    i = 0;
-
-    j = strlen(strIn) - 1;
-
-    while(strIn[i] == ' ')
-        ++i;
-
-    while(strIn[j] == ' ')
-        --j;
-    strncpy(strOut, strIn + i , j - i + 1);
-    strOut[j - i + 1] = '\0';
-}
 
 
 void Interpreter_Runner(){
@@ -89,7 +75,7 @@ void Interpreter_Entry(char *path){// 包含初始化代码信息，区分代码
     if (hFile == NULL) return;
     file_size=GetFileSize(hFile,NULL);
     code = (char*)malloc(file_size+1);
-    code[file_size+1]="\0";
+    code[file_size+1]='\0';
     if(!ReadFile(hFile,code,file_size,&dwRead,NULL))return;
     // 首次处理代码
     char *line;
@@ -109,7 +95,35 @@ void Interpreter_Entry(char *path){// 包含初始化代码信息，区分代码
 }
 int  main(int argc, char *argv[])
 {
-    printf("%s\n",strOut);
+    
+/*
+运行流程
+
+读入代码
+
+逐行分析代码段
+
+切割代码段
+    DATASEGMENT += {段落名称，段落代码（按行保存）}
+
+初始化CPU，找到程序入口点
+
+逐行伪运行：
+    case 遇到变量
+        case 声明
+            CPU中的变量栈压入变量信息{属于哪个段落（作用域），变量名，变量类型}
+        case 引用
+            查找CPU代码段中是否有变量信息，引用计数+1
+    case 遇到调用
+        case 外部调用
+            检查自带的函数表
+        case 内部函数
+            CPU {CS:调用函数,;IP:0}
+    case other.....
+        
+
+*/
+
     //CLI部分
     if (argc == 1){
         printf("usage: asscheck.exe [path]\n    Precompiled the code.\n");
